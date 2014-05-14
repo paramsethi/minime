@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+	<servlet>
+		<servlet-name>frontcontroller</servlet-name>
+		<servlet-class>me.mini.servlet.FrontController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>frontcontroller</servlet-name>
+		<url-pattern>/front</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>shorten</servlet-name>
+		<servlet-class>me.mini.servlet.ShortenUrlServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>shorten</servlet-name>
+		<url-pattern>/shorten</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>original</servlet-name>
+		<servlet-class>me.mini.servlet.OriginalUrlServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>original</servlet-name>
+		<url-pattern>/original</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>error</servlet-name>
+		<servlet-class>me.mini.servlet.ErrorHandler</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>error</servlet-name>
+		<url-pattern>/exception</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>stats</servlet-name>
+		<servlet-class>me.mini.servlet.StatsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>stats</servlet-name>
+		<url-pattern>/debugstats</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>/apitest.jsp</welcome-file>
+	</welcome-file-list>
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+
+</web-app>
