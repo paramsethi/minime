@@ -6,10 +6,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "error")
 public class ErrorDictionary {
 
-    @XmlElement(name = "errorCode")
     private int errorCode;
 
-    @XmlElement(name = "errorMessage")
     private String errorMessage;
 
     private interface ErrorCode {
@@ -34,6 +32,9 @@ public class ErrorDictionary {
         static final String INVALID_URL_MSG = "Invalid url.";
     }
 
+    public ErrorDictionary(){	
+    }
+    
     public ErrorDictionary(int errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
@@ -48,10 +49,12 @@ public class ErrorDictionary {
     public static final ErrorDictionary UNSUPPORTED_RESPONSE_FORMAT_ERROR = new ErrorDictionary(ErrorCode.UNSUPPORTED_RESPONSE_FORMAT_CODE, ErrorMessage.UNSUPPORTED_RESPONSE_FORMAT_MSG);
     public static final ErrorDictionary INVALID_URL_ERROR = new ErrorDictionary(ErrorCode.INVALID_URL_CODE, ErrorMessage.INVALID_URL_MSG);
 
+    @XmlElement(name = "errorCode")
     public int getErrorCode() {
         return errorCode;
     }
 
+    @XmlElement(name = "errorMessage")
     public String getErrorMessage() {
         return errorMessage;
     }

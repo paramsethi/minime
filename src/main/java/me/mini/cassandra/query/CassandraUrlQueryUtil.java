@@ -1,5 +1,6 @@
 package me.mini.cassandra.query;
 
+import com.netflix.astyanax.MutationBatch;
 import com.netflix.astyanax.connectionpool.OperationResult;
 import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.astyanax.model.*;
@@ -19,7 +20,7 @@ public class CassandraUrlQueryUtil {
 
     private CassandraClient client;
     private ColumnFamily<String, String> columnFamily;
-    private CassandraUrlQueryUtil cassandraUrlQueryUtil;
+    private static CassandraUrlQueryUtil cassandraUrlQueryUtil;
     public static final String COLUMN_FAMILY_NAME = "url_mapping";
     private static final Logger log = Logger.getLogger(CassandraUrlQueryUtil.class);
 
@@ -31,21 +32,21 @@ public class CassandraUrlQueryUtil {
         public static final String COUNT_ALL_QUERY = "SELECT COUNT(1) FROM url_mapping LIMIT 999999999";
     }
 
-    public static CassandraUrlQueryUtil getInstance() {
-        return new CassandraUrlQueryUtil();
-    }
+	public static CassandraUrlQueryUtil getInstance() {
+		if (cassandraUrlQueryUtil == null) {
+			new CassandraUrlQueryUtil().initialize();
+		}
+		return cassandraUrlQueryUtil;
+	}
 
     private CassandraUrlQueryUtil() {
-        if (cassandraUrlQueryUtil == null) {
-            cassandraUrlQueryUtil = new CassandraUrlQueryUtil();
-            cassandraUrlQueryUtil.initialize();
-        }
     }
 
     private synchronized void initialize() {
         try {
-            columnFamily = getColumnFamily();
-            client = CassandraClient.getInstance();
+        	cassandraUrlQueryUtil = new CassandraUrlQueryUtil();
+        	cassandraUrlQueryUtil.columnFamily = getColumnFamily();
+        	cassandraUrlQueryUtil.client = CassandraClient.getInstance();
         } catch (MinimeException e) {
             e.printStackTrace();
         }
@@ -121,7 +122,7 @@ public class CassandraUrlQueryUtil {
         }
         UrlMapping entity = null;
         ColumnFamilyQuery<String, String> columnFamilyQuery = client.getKeyspace().prepareQuery(columnFamily);
-        PreparedCqlQuery cqlQuery = columnFamilyQuery.withCql(preparedQuery).asPreparedStatement();
+        PreparedCqlQuery<String, String> cqlQuery = columnFamilyQuery.withCql(preparedQuery).asPreparedStatement();
         try {
             log.info(String.format("CQL: %s , with values: %s", preparedQuery, value));
             OperationResult<CqlResult<String, String>> result = cqlQuery.withStringValue(value).execute();
@@ -152,7 +153,7 @@ public class CassandraUrlQueryUtil {
 
     public long countQuery() throws MinimeException {
         ColumnFamilyQuery<String, String> columnFamilyQuery = client.getKeyspace().prepareQuery(columnFamily);
-        PreparedCqlQuery cqlQuery = columnFamilyQuery.withCql(Query.COUNT_ALL_QUERY).asPreparedStatement();
+        PreparedCqlQuery<String, String> cqlQuery = columnFamilyQuery.withCql(Query.COUNT_ALL_QUERY).asPreparedStatement();
         try {
             log.info(String.format("CQL: %s", Query.COUNT_ALL_QUERY));
             OperationResult<CqlResult<String, String>> result = cqlQuery.execute();
@@ -175,6 +176,25 @@ public class CassandraUrlQueryUtil {
         return -1;
     }
 
+
+	/**
+	 * Delete url entry by hash key
+	 * 
+	 * @param urlHash
+	 */
+	public void deleteQueryExecute(String urlHash) throws MinimeException {
+		if (!GlobalUtils.isStringNullOrEmpty(urlHash)) {
+			try {
+				MutationBatch m = client.getKeyspace().prepareMutationBatch();
+				// Deleting an entire row
+				m.withRow(columnFamily, urlHash).delete();
+				m.execute();
+			} catch (ConnectionException e) {
+				e.printStackTrace();
+				throw new MinimeException(e);
+			}
+		}
+	}
 
     private ColumnFamily<String, String> getColumnFamily() {
         ColumnFamily<String, String> cf = new ColumnFamily<String, String>(COLUMN_FAMILY_NAME, StringSerializer.get(), StringSerializer.get());

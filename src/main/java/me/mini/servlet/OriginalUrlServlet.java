@@ -58,6 +58,7 @@ public class OriginalUrlServlet extends HttpServlet {
             }
             resp.getOutputStream().print(XMLUtils.convertToXML(urlMapping));
         } catch (Exception e) {
+        	e.printStackTrace();
             sendErrorResponse(req, resp, e.getMessage());
         }
         log.info(String.format("Done processing OriginalUrlServlet request for shorturl: %s", url));

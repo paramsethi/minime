@@ -4,8 +4,6 @@ import me.mini.bean.ErrorDictionary;
 import me.mini.utils.MinimeException;
 import me.mini.utils.XMLUtils;
 
-import org.apache.log4j.Logger;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +32,7 @@ public class ErrorHandler extends HttpServlet {
 
     public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // error message
-        String message = req.getParameter("message");
+        String message = (String) req.getAttribute("message");
         message = message == null ? ErrorDictionary.GENERIC_ERROR.getErrorMessage() : message;
         // error code
         Integer errorCode = (Integer) req.getAttribute("code");

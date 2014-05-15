@@ -4,8 +4,6 @@ import me.mini.bean.ErrorDictionary;
 import me.mini.utils.Constants;
 import me.mini.utils.MinimeException;
 
-import org.apache.log4j.Logger;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -49,12 +47,6 @@ public class FrontController extends HttpServlet {
                 throw new MinimeException(ErrorDictionary.UNSUPPORTED_OPERATION_ERROR);
             }
 
-            String format = req.getParameter("format");
-            SupportedResponseFormat responseFormat = SupportedResponseFormat.valueOf(format);
-            if (responseFormat == null) {
-                throw new MinimeException(ErrorDictionary.UNSUPPORTED_RESPONSE_FORMAT_ERROR);
-            }
-
             String url;
             switch (actionType) {
                 case min:
@@ -75,6 +67,7 @@ public class FrontController extends HttpServlet {
             RequestDispatcher rd = req.getRequestDispatcher(url);
             rd.forward(req, resp);
         } catch (Exception e) {
+        	e.printStackTrace();
             sendErrorResponse(req, resp, e.getMessage());
         }
     }
@@ -86,21 +79,8 @@ public class FrontController extends HttpServlet {
         disp.forward(req, resp);
     }
 
-
-    public boolean isValidResponseFormat(String response) {
-        try {
-            SupportedResponseFormat.valueOf(response);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
     public enum SupportedOperations {
         min, unmin, error, stats
     }
 
-    public enum SupportedResponseFormat {
-        xml
-    }
 }

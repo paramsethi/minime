@@ -1,6 +1,6 @@
 package me.mini.servlet;
 
-import me.mini.bean.SystemStatics;
+import me.mini.bean.SystemStatistics;
 import me.mini.utils.Constants;
 import me.mini.utils.StatisticsGenerator;
 import me.mini.utils.XMLUtils;
@@ -46,9 +46,10 @@ public class StatisticsServlet extends HttpServlet {
     public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Processing StatisticsServlet request");
         try {
-            SystemStatics entity = StatisticsGenerator.systemStats();
+            SystemStatistics entity = StatisticsGenerator.systemStats();
             resp.getOutputStream().print(XMLUtils.convertToXML(entity));
         } catch (Exception e) {
+        	e.printStackTrace();
             sendErrorResponse(req, resp, e.getMessage());
         }
     }

@@ -3,23 +3,23 @@ package me.mini.bean;
 import me.mini.utils.PropertyBag;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * JAXB bean for URL entity and cassandra column family url_mapping
  *
  * @author parampreetsethi
  */
+@XmlRootElement(name = "url")
 public class UrlMapping {
-
-    @XmlElement(name = "urlHash")
+    
     private String urlHash;
 
-    @XmlElement(name = "shortUrl")
     private String shortUrl;
 
-    @XmlElement(name = "origUrl")
     private String origUrl;
 
+    @XmlElement(name = "urlHash")
     public String getUrlHash() {
         return urlHash;
     }
@@ -29,6 +29,7 @@ public class UrlMapping {
         this.setShortUrl(urlHash);
     }
 
+    @XmlElement(name = "shortUrl")
     public String getShortUrl() {
         return shortUrl;
     }
@@ -37,6 +38,7 @@ public class UrlMapping {
         this.shortUrl = PropertyBag.getProperty("app_url") + urlHash;
     }
 
+    @XmlElement(name = "origUrl")
     public String getOrigUrl() {
         return origUrl;
     }

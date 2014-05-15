@@ -10,20 +10,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @XmlRootElement(name = "stats")
-public class SystemStatics {
-
-    @XmlElement
+public class SystemStatistics {
+    
     private long totalUrls;
 
-    @XmlElement
     private long timeTakenInMillis;
 
-    @XmlElement
     private long totalMemory;
 
-    @XmlElement
     private long freeMemory;
 
+    @XmlElement
     public long getTotalUrls() {
         return totalUrls;
     }
@@ -32,6 +29,7 @@ public class SystemStatics {
         this.totalUrls = totalUrls;
     }
 
+    @XmlElement
     public long getTimeTakenInMillis() {
         return timeTakenInMillis;
     }
@@ -40,6 +38,7 @@ public class SystemStatics {
         this.timeTakenInMillis = timeTakenInMillis;
     }
 
+    @XmlElement
     public long getTotalMemory() {
         return totalMemory;
     }
@@ -48,6 +47,7 @@ public class SystemStatics {
         this.totalMemory = totalMemory;
     }
 
+    @XmlElement
     public long getFreeMemory() {
         return freeMemory;
     }

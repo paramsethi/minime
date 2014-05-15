@@ -13,6 +13,7 @@ public class MinimeException extends Exception {
 
     public MinimeException(String message) {
         super(message);
+        this.message = message;
     }
 
     public MinimeException(Throwable cause) {
@@ -21,6 +22,7 @@ public class MinimeException extends Exception {
 
     public MinimeException(String message, Throwable cause) {
         super(message, cause);
+        this.message = message;
     }
 
     public MinimeException(ErrorDictionary error) {

@@ -1,9 +1,6 @@
 package me.mini.utils;
 
-import me.mini.bean.SystemStatics;
-
 import org.apache.log4j.Logger;
-
 import java.util.Properties;
 
 /**

@@ -40,7 +40,7 @@
 
 	<servlet>
 		<servlet-name>stats</servlet-name>
-		<servlet-class>me.mini.servlet.StatsServlet</servlet-class>
+		<servlet-class>me.mini.servlet.StatisticsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>stats</servlet-name>

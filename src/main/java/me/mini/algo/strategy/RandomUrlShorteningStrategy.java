@@ -100,4 +100,6 @@ public class RandomUrlShorteningStrategy implements BaseUrlShorteningStrategy {
         }
         return value.toCharArray();
     }
+
+
 }

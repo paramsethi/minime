@@ -56,15 +56,15 @@ public class ShortenUrlServlet extends HttpServlet {
             validateQueryUrl(url);
             CassandraUrlQueryUtil cassandraQueryClient = CassandraUrlQueryUtil.getInstance();
             UrlMapping urlMapping = cassandraQueryClient.queryByOrigUrl(url);
-            if (urlMapping != null) {
-                throw new MinimeException(ErrorDictionary.URL_ALREADY_EXISTS_ERROR);
-            }
-            urlMapping = new UrlMapping();
-            urlMapping.setOrigUrl(url);
-            urlMapping.setUrlHash(generateUrlHash());
-            cassandraQueryClient.writeQuery(urlMapping);
+			if (urlMapping == null) {
+				urlMapping = new UrlMapping();
+				urlMapping.setOrigUrl(url);
+				urlMapping.setUrlHash(generateUrlHash());
+				cassandraQueryClient.writeQuery(urlMapping);
+			}
             resp.getOutputStream().print(XMLUtils.convertToXML(urlMapping));
         } catch (Exception ex) {
+        	ex.printStackTrace();
             sendErrorResponse(req, resp, ex.getMessage());
         }
         log.info(String.format("Done processing ShortenUrlServlet request for origurl: %s", url));
