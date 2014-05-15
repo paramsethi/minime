@@ -1,32 +1,40 @@
 package me.mini.utils;
 
-public class MiniMeException extends Exception {
-	private static final long serialVersionUID = 1L;
-	private String message;
+import me.mini.bean.ErrorDictionary;
 
-	public MiniMeException() {
-		super();
-	}
+public class MinimeException extends Exception {
 
-	public MiniMeException(String message) {
-		super(message);
-		this.message = message;
-	}
+    private static final long serialVersionUID = 1L;
+    private String message;
 
-	public MiniMeException(Throwable cause) {
-		super(cause);
-	}
+    public MinimeException() {
+        super();
+    }
 
-	/**
-	 * @return the message
-	 */
-	@Override
-	public String getMessage() {
-		return message;
-	}
+    public MinimeException(String message) {
+        super(message);
+    }
 
-	@Override
-	public String toString() {
-		return message;
-	}
+    public MinimeException(Throwable cause) {
+        super(cause);
+    }
+
+    public MinimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public MinimeException(ErrorDictionary error) {
+        this(error.getErrorMessage());
+    }
+
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return message;
+    }
 }

@@ -1,6 +1,6 @@
 package me.mini.tests;
 
-import me.mini.client.CassandraClient;
+import me.mini.cassandra.client.CassandraClient;
 import me.mini.entity.UrlEntity;
 import me.mini.utils.MiniMeException;
 

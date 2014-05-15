@@ -1,6 +1,17 @@
 package me.mini.servlet;
 
-import java.io.IOException;
+import me.mini.algo.hashgenerator.ShortUrlGenerator;
+import me.mini.algo.strategy.BaseUrlShorteningStrategy;
+import me.mini.algo.strategy.RandomUrlShorteningStrategy;
+import me.mini.bean.ErrorDictionary;
+import me.mini.bean.UrlMapping;
+import me.mini.cassandra.query.CassandraUrlQueryUtil;
+import me.mini.utils.Constants;
+import me.mini.utils.GlobalUtils;
+import me.mini.utils.MinimeException;
+import me.mini.utils.XMLUtils;
+
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,132 +19,83 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
-import me.mini.client.CassandraClient;
-import me.mini.entity.UrlEntity;
-import me.mini.strategy.RandomUrlShorteningStrategy;
-import me.mini.strategy.UrlShorteningStrategy;
-import me.mini.utils.AppConstants;
-import me.mini.utils.MiniMeException;
-import me.mini.utils.Utils;
-import me.mini.utils.XMLHelper;
+import java.io.IOException;
 
 /**
  * Shorten the given long url.
- * 
+ *
  * @author parampreetsethi
- * 
  */
 public class ShortenUrlServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private final static Logger log = Logger.getLogger(ShortenUrlServlet.class);
 
-	private static int collisionCount = 0;
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = Logger.getLogger(ShortenUrlServlet.class);
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		processRequest(req, resp);
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        processRequest(req, resp);
+    }
 
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		processRequest(req, resp);
-	};
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        processRequest(req, resp);
+    }
 
-	/**
-	 * Process incoming request and shorten the given url
-	 * 
-	 * @param req
-	 * @param resp
-	 * @throws ServletException
-	 * @throws IOException
-	 */
-	public void processRequest(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    /**
+     * Process incoming request and shorten the given url
+     *
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
+    public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String url = req.getParameter(Constants.origurl);
+        log.info(String.format("Processing ShortenUrlServlet request for origurl: %s", url));
+        try {
+            validateQueryUrl(url);
+            CassandraUrlQueryUtil cassandraQueryClient = CassandraUrlQueryUtil.getInstance();
+            UrlMapping urlMapping = cassandraQueryClient.queryByOrigUrl(url);
+            if (urlMapping != null) {
+                throw new MinimeException(ErrorDictionary.URL_ALREADY_EXISTS_ERROR);
+            }
+            urlMapping = new UrlMapping();
+            urlMapping.setOrigUrl(url);
+            urlMapping.setUrlHash(generateUrlHash());
+            cassandraQueryClient.writeQuery(urlMapping);
+            resp.getOutputStream().print(XMLUtils.convertToXML(urlMapping));
+        } catch (Exception ex) {
+            sendErrorResponse(req, resp, ex.getMessage());
+        }
+        log.info(String.format("Done processing ShortenUrlServlet request for origurl: %s", url));
+    }
 
-		String url = req.getParameter("origurl");
-		boolean isError = false;
-		String errorMsg = AppConstants.GENERIC_ERROR;
-		int errorCode = AppConstants.GENERIC_ERROR_CODE;
+    /**
+     * Generates a unique (and collision free) has for the short url - based on the {@link me.mini.algo.strategy.BaseUrlShorteningStrategy} implementation
+     *
+     * @return
+     * @throws MinimeException
+     */
+    private String generateUrlHash() throws MinimeException {
+        BaseUrlShorteningStrategy strategy = new RandomUrlShorteningStrategy();
+        ShortUrlGenerator urlGenerator = new ShortUrlGenerator(strategy);
+        String shortUrlHash = urlGenerator.generateShortUrlHash();
+        return shortUrlHash;
+    }
 
-		try {
-			if (Utils.isStringNullOrEmpty(url)) {
-				errorCode = AppConstants.MISSING_REQUIRED_PARAMETER_CODE;
-				throw new MiniMeException(
-						AppConstants.MISSING_REQUIRED_PARAMETER);
-			}
+    private void sendErrorResponse(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws ServletException, IOException {
+        RequestDispatcher disp = req.getRequestDispatcher(Constants.exception);
+        req.setAttribute("message", errorMessage);
+        disp.forward(req, resp);
+    }
 
-			if (!Utils.isValidUrl(url)) {
-				errorCode = AppConstants.INVALID_URL_CODE;
-				throw new MiniMeException(AppConstants.INVALID_URL);
-			}
+    private void validateQueryUrl(String url) throws MinimeException {
+        if (GlobalUtils.isStringNullOrEmpty(url)) {
+            throw new MinimeException(ErrorDictionary.MISSING_REQUIRED_PARAMETER_ERROR);
+        }
+        if (!GlobalUtils.isValidUrl(url)) {
+            throw new MinimeException(ErrorDictionary.INVALID_URL_ERROR);
+        }
+    }
 
-			String shortUrlHash = req.getParameter("customalias");
-
-			log.debug("Original url: " + url);
-
-			CassandraClient client = CassandraClient.getInstance();
-
-			UrlEntity entity = client.getByOrigUrl(url);
-
-			if (!Utils.isStringNullOrEmpty(shortUrlHash)) {
-				if (entity != null && !entity.getUrlHash().equals(shortUrlHash)) {
-					errorCode = AppConstants.URL_ALREADY_EXISTS_CODE;
-					throw new MiniMeException(AppConstants.URL_ALREADY_EXISTS);
-				} else {
-					if (client.getByShortUrlHash(shortUrlHash) != null) {
-						errorCode = AppConstants.EXISTING_CUSTOM_ALIAS_CODE;
-
-						throw new MiniMeException(
-								AppConstants.EXISTING_CUSTOM_ALIAS);
-					}
-				}
-			}
-
-			if (entity == null) {
-
-				entity = new UrlEntity();
-				entity.setOrigUrl(url);
-				if (Utils.isStringNullOrEmpty(shortUrlHash)) {
-
-					// Generate Unique Hash
-					UrlShorteningStrategy strategy = new RandomUrlShorteningStrategy();
-					shortUrlHash = strategy.getUrlHash();
-
-					// Check if hash collision, and it already exists in the
-					// database
-					while (client.getByShortUrlHash(shortUrlHash) != null) {
-						collisionCount++;
-						shortUrlHash = strategy.getUrlHash();
-					}
-				}
-				entity.setUrlHash(shortUrlHash);
-				client.writeQueryExecute(entity);
-			}
-
-			log.debug("Total Collision count " + collisionCount);
-
-			resp.getOutputStream().print(XMLHelper.convertToXML(entity));
-
-		} catch (MiniMeException mex) {
-			isError = true;
-			errorMsg = mex.getMessage();
-		} catch (Exception ex) {
-			isError = true;
-			errorMsg = ex.getMessage();
-			ex.printStackTrace();
-		}
-
-		if (isError) {
-			errorMsg = errorMsg == null ? AppConstants.GENERIC_ERROR : errorMsg;
-			RequestDispatcher disp = req
-					.getRequestDispatcher(AppConstants.ERROR_URL);
-			req.setAttribute("msg", errorMsg);
-			req.setAttribute("code", errorCode);
-			disp.forward(req, resp);
-		}
-
-	}
 }

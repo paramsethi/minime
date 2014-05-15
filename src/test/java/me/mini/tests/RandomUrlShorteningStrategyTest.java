@@ -2,7 +2,7 @@ package me.mini.tests;
 
 import java.util.HashSet;
 
-import me.mini.strategy.RandomUrlShorteningStrategy;
+import me.mini.algo.strategy.RandomUrlShorteningStrategy;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
