@@ -32,3 +32,11 @@ target/surefire-reports/me.mini.tests.RandomUrlShorteningStrategyTest.txt
 target/surefire-reports/TEST-me.mini.tests.CassandraClientTest.xml
 
 target/surefire-reports/TEST-me.mini.tests.RandomUrlShorteningStrategyTest.xml
+
+*.log
+
+target/classes/log4j.properties
+
+target/surefire-reports/me.mini.tests.UrlShorteningStrategyTest.txt
+
+target/surefire-reports/TEST-me.mini.tests.UrlShorteningStrategyTest.xml
