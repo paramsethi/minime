@@ -15,9 +15,7 @@ import org.junit.Test;
  * 
  * @author parampreetsethi
  * 
- *         Tests in this class are disabled for now. These should be enabled
- *         once the Cassandra setup is ready and the tests will verify if the
- *         environment is correctly setup or not.
+ * Tests in this class are disabled for now. These should be enabled once the Cassandra setup is ready and the tests will verify if the environment is correctly setup or not.
  * 
  */
 public class CassandraClientTest {
@@ -59,7 +57,7 @@ public class CassandraClientTest {
 		// Verify inserted in database
 		Assert.assertTrue(isInserted);
 	}
-
+	
 	@After
 	public void tear() throws MinimeException {
 		// clean up data

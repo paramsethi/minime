@@ -101,7 +101,7 @@
 						</div></td>
 				</tr>
 			</table>
-			<div style="padding: 20px; margin-left: 120px;">
+			<div style="padding: 20px; margin-left: 120px; margin-top:20px;">
 				<input id="submitButton" style="display: inline-block;"
 					type="button" value="Submit" name="MiniMe!"
 					onclick="JavaScript:submitForm();">

@@ -77,10 +77,6 @@ public class OriginalUrlServlet extends HttpServlet {
         if (GlobalUtils.isStringNullOrEmpty(url)) {
             throw new MinimeException(ErrorDictionary.MISSING_REQUIRED_PARAMETER_ERROR);
         }
-        if (!GlobalUtils.isValidUrl(url)) {
-            throw new MinimeException(ErrorDictionary.INVALID_URL_ERROR);
-        }
     }
-
 
 }
