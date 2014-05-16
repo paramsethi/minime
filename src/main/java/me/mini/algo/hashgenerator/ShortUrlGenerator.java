@@ -14,8 +14,12 @@ public class ShortUrlGenerator {
 
     public ShortUrlGenerator(BaseUrlShorteningStrategy strategy) {
         this.urlShorteningStrategy = strategy;
-        this.cassandraUrlQueryUtil = CassandraUrlQueryUtil.getInstance();
-    }
+		try {
+			this.cassandraUrlQueryUtil = CassandraUrlQueryUtil.getInstance();
+		} catch (MinimeException mex) {
+			mex.printStackTrace();
+		}
+	}
 
     public String generateShortUrlHash() throws MinimeException {
         int collisionCount = 0;

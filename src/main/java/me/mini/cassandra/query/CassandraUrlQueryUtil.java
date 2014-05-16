@@ -15,7 +15,12 @@ import me.mini.utils.MinimeException;
 
 import org.apache.log4j.Logger;
 
-
+/**
+ * Singleton design pattern
+ * 
+ * @author parampreetsethi
+ *
+ */
 public class CassandraUrlQueryUtil {
 
     private CassandraClient client;
@@ -32,7 +37,7 @@ public class CassandraUrlQueryUtil {
         public static final String COUNT_ALL_QUERY = "SELECT COUNT(1) FROM url_mapping LIMIT 999999999";
     }
 
-	public static CassandraUrlQueryUtil getInstance() {
+	public static CassandraUrlQueryUtil getInstance() throws MinimeException{
 		if (cassandraUrlQueryUtil == null) {
 			new CassandraUrlQueryUtil().initialize();
 		}
@@ -42,13 +47,14 @@ public class CassandraUrlQueryUtil {
     private CassandraUrlQueryUtil() {
     }
 
-    private synchronized void initialize() {
+    private synchronized void initialize() throws MinimeException{
         try {
         	cassandraUrlQueryUtil = new CassandraUrlQueryUtil();
         	cassandraUrlQueryUtil.columnFamily = getColumnFamily();
         	cassandraUrlQueryUtil.client = CassandraClient.getInstance();
-        } catch (MinimeException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            throw new MinimeException(e);
         }
     }
 

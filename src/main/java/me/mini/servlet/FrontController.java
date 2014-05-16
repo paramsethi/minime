@@ -41,7 +41,7 @@ public class FrontController extends HttpServlet {
      */
     public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String action = req.getParameter(Constants.action);
+            String action = req.getParameter(Constants.ACTION);
             SupportedOperations actionType = SupportedOperations.valueOf(action);
             if (actionType == null) {
                 throw new MinimeException(ErrorDictionary.UNSUPPORTED_OPERATION_ERROR);
@@ -50,17 +50,17 @@ public class FrontController extends HttpServlet {
             String url;
             switch (actionType) {
                 case min:
-                    url = Constants.shorten;
+                    url = Constants.SHORTEN;
                     break;
                 case unmin:
-                    url = Constants.original;
+                    url = Constants.ORIGINAL;
                     break;
                 case stats:
-                    url = Constants.debugstats;
+                    url = Constants.DEBUGSTATS;
                     break;
                 case error:
                 default:
-                    url = Constants.exception;
+                    url = Constants.EXCEPTION;
                     // error case
                     break;
             }
@@ -76,7 +76,7 @@ public class FrontController extends HttpServlet {
 
 
     private void sendErrorResponse(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws ServletException, IOException {
-        RequestDispatcher disp = req.getRequestDispatcher(Constants.exception);
+        RequestDispatcher disp = req.getRequestDispatcher(Constants.EXCEPTION);
         req.setAttribute("message", errorMessage);
         disp.forward(req, resp);
     }

@@ -47,7 +47,7 @@ public class OriginalUrlServlet extends HttpServlet {
      * @throws IOException
      */
     public void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String url = req.getParameter(Constants.shorturl);
+        String url = req.getParameter(Constants.SHORTURL);
         log.info(String.format("Processing OriginalUrlServlet request for shorturl: %s", url));
         try {
             validateQueryUrl(url);
@@ -68,7 +68,7 @@ public class OriginalUrlServlet extends HttpServlet {
     }
 
     private void sendErrorResponse(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws ServletException, IOException {
-        RequestDispatcher disp = req.getRequestDispatcher(Constants.exception);
+        RequestDispatcher disp = req.getRequestDispatcher(Constants.EXCEPTION);
         req.setAttribute("message", errorMessage);
         disp.forward(req, resp);
     }

@@ -58,7 +58,7 @@ public class StatisticsServlet extends HttpServlet {
     }
 
     private void sendErrorResponse(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws ServletException, IOException {
-        RequestDispatcher disp = req.getRequestDispatcher(Constants.exception);
+        RequestDispatcher disp = req.getRequestDispatcher(Constants.EXCEPTION);
         req.setAttribute("message", errorMessage);
         disp.forward(req, resp);
     }
