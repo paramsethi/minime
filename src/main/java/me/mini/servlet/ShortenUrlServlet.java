@@ -63,7 +63,9 @@ public class ShortenUrlServlet extends HttpServlet {
 				cassandraQueryClient.writeQuery(urlMapping);
 			}
             resp.getOutputStream().print(XMLUtils.convertToXML(urlMapping));
-        } catch (Exception ex) {
+		} catch (MinimeException mex) {
+			sendErrorResponse(req, resp, mex.getMessage());
+		} catch (Exception ex) {
         	ex.printStackTrace();
             sendErrorResponse(req, resp, ex.getMessage());
         }

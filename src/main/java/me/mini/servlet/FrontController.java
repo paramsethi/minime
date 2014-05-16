@@ -66,7 +66,9 @@ public class FrontController extends HttpServlet {
             }
             RequestDispatcher rd = req.getRequestDispatcher(url);
             rd.forward(req, resp);
-        } catch (Exception e) {
+		} catch (MinimeException mex) {
+			sendErrorResponse(req, resp, mex.getMessage());
+		} catch (Exception e) {
         	e.printStackTrace();
             sendErrorResponse(req, resp, e.getMessage());
         }

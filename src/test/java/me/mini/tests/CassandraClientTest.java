@@ -7,12 +7,17 @@ import me.mini.utils.MinimeException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests for Cassandra Client
  * 
  * @author parampreetsethi
+ * 
+ *         Tests in this class are disabled for now. These should be enabled
+ *         once the Cassandra setup is ready and the tests will verify if the
+ *         environment is correctly setup or not.
  * 
  */
 public class CassandraClientTest {
@@ -31,6 +36,7 @@ public class CassandraClientTest {
 	}
 
 	@Test
+	@Ignore
 	public void writeQueryExecuteNullInsertTest() throws MinimeException {
 		// Insert data into Database
 		UrlMapping entity = null;
@@ -41,6 +47,7 @@ public class CassandraClientTest {
 	}
 
 	@Test
+	@Ignore
 	public void writeQueryExecuteValidInsertTest() throws MinimeException {
 		// Insert data into Database
 		UrlMapping entity = new UrlMapping();
@@ -52,7 +59,7 @@ public class CassandraClientTest {
 		// Verify inserted in database
 		Assert.assertTrue(isInserted);
 	}
-	
+
 	@After
 	public void tear() throws MinimeException {
 		// clean up data

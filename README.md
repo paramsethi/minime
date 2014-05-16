@@ -1,7 +1,7 @@
 minime
 ======
 
-This webapp can be used via REST API, or UI test page at http://mini.me/testapi.jsp
+This webapp can be used via REST API, or UI test page at http://mini.me/main.jsp or http://localhost:8080/main.jsp
 
 Dependecies:
 --------------------------------------------------------------------
@@ -31,7 +31,7 @@ The properties can be change at: <APP_ROOT>/src/main/resources/minime.properties
 
 Step 3: Go to minime project directory and Run pom.xml using "mvn compile package" command. If the cassandra setup is correct, all tests should pass.
 
-Step 4: Copy minime/target/ROOT.war to TOMCAT_ROOT/webapps directory. Open http://localhost:8080/testapi.jsp for verification. Refer API documentation on how to run API calls.
+Step 4: Copy minime/target/ROOT.war to TOMCAT_ROOT/webapps directory. Open http://localhost:8080/main.jsp for verification. Refer API documentation on how to run API calls.
 
 --------------------------------------------------------------------
 

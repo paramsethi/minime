@@ -48,7 +48,7 @@
 	</servlet-mapping>
 
 	<welcome-file-list>
-		<welcome-file>/apitest.jsp</welcome-file>
+		<welcome-file>/main.jsp</welcome-file>
 	</welcome-file-list>
 	<filter>
 		<filter-name>UrlRewriteFilter</filter-name>

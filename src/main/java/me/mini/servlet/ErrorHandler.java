@@ -43,6 +43,9 @@ public class ErrorHandler extends HttpServlet {
         } catch (MinimeException mex) {
             mex.printStackTrace();
             resp.getOutputStream().print(mex.getMessage());
-        }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			resp.getOutputStream().print(ex.getMessage());
+		}
     }
 }
